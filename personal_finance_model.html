@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Finance Model</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .category {
+            font-weight: bold;
+            background-color: #e9e9e9;
+        }
+        .subcategory {
+            padding-left: 20px;
+        }
+        .total-row {
+            font-weight: bold;
+            background-color: #e9e9e9;
+        }
+        .data-cell {
+            text-align: right;
+        }
+        input {
+            width: 100%;
+            padding: 5px;
+            box-sizing: border-box;
+            text-align: right;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #ddd;
+            margin-right: 5px;
+            border-radius: 5px 5px 0 0;
+        }
+        .tab.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .instructions {
+            background-color: #e7f3fe;
+            border-left: 6px solid #2196F3;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Personal Three-Statement Financial Model</h1>
+    
+    <div class="instructions">
+        <p><strong>Instructions:</strong> Enter your financial data in the input fields. The model will automatically calculate totals and update the connected statements. Click the tabs to navigate between statements.</p>
+    </div>
+
+    <div class="tabs">
+        <div class="tab active" onclick="showTab('income-statement')">Income Statement</div>
+        <div class="tab" onclick="showTab('balance-sheet')">Balance Sheet</div>
+        <div class="tab" onclick="showTab('cash-flow')">Cash Flow Statement</div>
+    </div>
+
+    <div id="income-statement" class="tab-content active">
+        <div class="section">
+            <h2>Monthly Income Statement</h2>
+            <table id="income-table">
+                <tr>
+                    <th style="width: 60%;">Category</th>
+                    <th style="width: 40%;">Amount ($)</th>
+                </tr>
+                <tr class="category">
+                    <td colspan="2">Income</td>
+                </tr>
+                <tr class="subcategory">
+                    <td>Salary (Gross)</td>
+                    <td><input type="number" id="salary" value="5000" onchange="updateModel()"></td>
+                </tr>
+                <tr class="subcategory">
+                    <td>Bonuses/Commissions</td>
+                    <td><input type="number" id="bonuses" value="500" onchange="updateModel()"></td>
+                </tr>
+                <tr class="subcategory">
+                    <td>Investment Income (Dividends, Interest)</td>
+                    <td><input type="number" id="investment_income" value="100" onchange="updateModel()"></td>
+                </tr>
+                <tr class="subcategory">
+                    <td>Side Hustle/Freelance</td>
+                    <td><input type="number" id="side_income" value="200" onchange="updateModel()"></td>
+                </tr>
+                <tr class="subcategory">
+                    <td>Other Income</td>
+                    <td><input type="number" id="other_income" value="0" onchange="updateModel()"></td>
+                </tr>
+                <tr class="total-row">
+                    <td>Total Gross Income</td>
+                    <td class="data-cell" id="total_income">5800</td>
+                </tr>
+                
+                <tr class="category">
+                    <td colspan="2">Pre-tax Deductions</td>
+                </tr>
+                <tr class="subcategory">
+                    <td>401(k) Contributions</td>
+                    <td><input type="number" id="401k" value="500" onchange="updateModel()"></td>
+                </tr>
+                <tr class="subcategory">
+                    <td>Health Insurance Premiums</td>
+                    <td><input type="number" id="health_insurance" value="200" onchange="updateModel()"></td>
+                </tr>
+                <tr class="subcategory">
+                    <td>HSA/FSA Contributions</td>
+                    <td><input type="number" id="hsa_fsa" value="100" onchange="updateModel()"></td>
+                </tr>
+                <tr class="subcategory">
+                    <td>Other Pre-tax Benefits</td>
+                    <td><input type="number" id="other_pretax" value="50" onchange="updateModel()"></td>
+                </tr>
+                <tr class="total-row">
+                    <td>Total Pre-tax Deductions</td>
+                    <td class="data-cell" id="total_pretax">850</td>
+                </tr>
+                
+                <tr class="category">
+                    <td colspan="2">Taxes</td>
+                </tr>
+                <tr class="subcategory">
+                    <td>Federal Income Tax</td>
+                    <td><input type="number" id="federal_tax" value="600" onchange="updateModel()"></td>
+                </tr>
+                <tr class="subcategory">
+                    <td>State/Local Income Tax</td>
+                    <td><input type="number" id="state_tax" value="250" onchange="updateModel()"></td>
+                </tr>
+                <tr class="subcategory">
+                    <td>FICA (Social Security & Medicare)</td>
+                    <td><input type="number" id="fica" value="300" onchange="updateModel()"></td>
+                </tr>
+                <tr class="total-row">
+                    <td>Total Taxes</td>
+                    <td class="data-cell" id="total_taxes">1150</td>
+                </tr>
+                
+                <tr class="total-row">
+                    <td>Net Income After Taxes and Pre-tax Deductions</td>
+                    <td class="data-cell" id="net_income_after_tax">3800</td>
+                </tr>
+                
+                <tr class="category">
+                    <td colspan="2">Expenses</td>
+                </tr>
+                <tr class="subcategory">
+                    <td>Housing (Rent/Mortgage, Property Taxes, Insurance)</td>
+                    <td><input type="number" id="housing" value="1200" onchange="updateModel()"></td>
+                </tr>
+                <tr class="subcategory">
+                    <td>Utilities (Electricity, Water, Internet, Phone)</td>
+                    <td><input type="number" id="utilities" value="250" onchange="updateModel()"></td>
+                </tr>
+                <tr class="subcategory">
+                    <td>Transportation (Car Payment, Insurance, Gas, Maintenance)</td>
+                    <td><input type="number" id="transportation" value="350" onchange="updateModel()"></td>
+                </tr>
+                <tr class="subcategory">
+                    <td>Food (Groceries, Dining Out)</td>
+                    <td><input type="number" id="food" value="500" onchange="updateModel()"></td>
+                </tr>
+                <tr class="subcategory">
+                    <td>Healthcare (Out-of-pocket Expenses)</td>
+                    <td><input type="number" id="healthcare" value="100" onchange="updateModel()"></td>
+                </tr>
+                <tr class="subcategory">
+                    <td>Debt Payments (Student Loans, Credit Cards)</td>
+                    <td><input type="number" id="debt_payments" value="300" onchange="updateModel()"></td>
+                </tr>
+                <tr class="subcategory">
+                    <td>Entertainment/Discretionary</td>
+                    <td><input type="number" id="entertainment" value="200" onchange="updateModel()"></td>
+                </tr>
+                <tr class="subcategory">
+                    <td>Miscellaneous</td>
+                    <td><input type="number" id="miscellaneous" value="100" onchange="updateModel()"></td>
+                </tr>
+                <tr class="total-row">
+                    <td>Total Expenses</td>
+                    <td class="data-cell" id="total_expenses">3000</td>
+                </tr>
+                
+                <tr class="total-row">
+                    <td>Net Monthly Savings</td>
+                    <td class="data-cell" id="net_savings">800</td>
+                </tr>
+                <tr class="total-row">
+                    <td>Total Monthly Savings (incl. 401(k)/Pre-tax)</td>
+                    <td class="data-cell" id="total_savings">1300</td>
+                </tr>
+                <tr class="total-row">
+                    <td>Savings Rate (% of Gross Income)</td>
+                    <td class="data-cell" id="savings_rate">22.41%</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div id="balance-sheet" class="tab-content">
+        <div class="section">
+            <h2>Personal Balance Sheet</h2>
+            <table id="balance-sheet-table">
+                <tr>
+                    <th style="width: 60%;">Category</th>
+                    <th style="width: 40%;">Amount ($)</th>
+                </tr>
+                <tr class="category">
+                    <td colspan="2">Assets</td>
+                </tr>
+                <tr class="subcategory">
+                    <td>Cash (Checking Account)</td>
+                    <td><input type="number" id="checking" value="5000" onchange="updateModel()"></td>
+                </tr>
+                <tr class="subcategory">
+                    <td>Cash (Savings Account)</td>
+                    <td><input type="number" id="savings" value="10000" onchange="updateModel()"></td>
+                </tr>
+                <tr class="subcategory">
+                    <td>401(k) Balance</td>
+                    <td><input type="number" id="401k_balance" value="50000" onchange="updateModel()"></td>
+                </tr>
+                <tr class="subcategory">
+                    <td>IRA Balance</td>
+                    <td><input type="number" id="ira_balance" value="25000" onchange="updateModel()"></td>
+                </tr>
+                <tr class="subcategory">
+                    <td>Brokerage Accounts</td>
+                    <td><input type="number" id="brokerage" value="15000" onchange="updateModel()"></td>
+                </tr>
+                <tr class="subcategory">
+                    <td>Real Estate (Home Value)</td>
+                    <td><input type="number" id="real_estate" value="300000" onchange="updateModel()"></td>
+                </tr>
+                <tr class="subcategory">
+                    <td>Vehicle Value</td>
+                    <td><input type="number" id="vehicle" value="15000" onchange="updateModel()"></td>
+                </tr>
+                <tr class="subcategory">
+                    <td>Other Assets</td>
+                    <td><input type="number" id="other_assets" value="5000" onchange="updateModel()"></td>
+                </tr>
+                <tr class="total-row">
+                    <td>Total Assets</td>
+                    <td class="data-cell" id="total_assets">425000</td>
+                </tr>
+                
+                <tr class="category">
+                    <td colspan="2">Liabilities</td>
+                </tr>
+                <tr class="subcategory">
+                    <td>Mortgage</td>
+                    <td><input type="number" id="mortgage" value="240000" onchange="updateModel()"></td>
+                </tr>
+                <tr class="subcategory">
+                    <td>Auto Loan</td>
+                    <td><input type="number" id="auto_loan" value="8000" onchange="updateModel()"></td>
+                </tr>
+                <tr class="subcategory">
+                    <td>Student Loans</td>
+                    <td><input type="number" id="student_loans" value="20000" onchange="updateModel()"></td>
+                </tr>
+                <tr class="subcategory">
+                    <td>Credit Card Debt</td>
+                    <td><input type="number" id="credit_card" value="2000" onchange="updateModel()"></td>
+                </tr>
+                <tr class="subcategory">
+                    <td>Other Debt</td>
+                    <td><input type="number" id="other_debt" value="0" onchange="updateModel()"></td>
+                </tr>
+                <tr class="total-row">
+                    <td>Total Liabilities</td>
+                    <td class="data-cell" id="total_liabilities">270000</td>
+                </tr>
+                
+                <tr class="total-row">
+                    <td>Net Worth</td>
+                    <td class="data-cell" id="net_worth">155000</td>
+                </tr>
+                <tr class="total-row">
+                    <td>Debt-to-Asset Ratio</td>
+                    <td class="data-cell" id="debt_asset_ratio">0.64</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div id="cash-flow" class="tab-content">
+        <div class="section">
+            <h2>Monthly Cash Flow Statement</h2>
+            <table id="cash-flow-table">
+                <tr>
+                    <th style="width: 60%;">Category</th>
+                    <th style="width: 40%;">Amount ($)</th>
+                </tr>
+                <tr class="category">
+                    <td colspan="2">Beginning Cash Balance</td>
+                </tr>
+                <tr>
+                    <td>Beginning Cash (from Balance Sheet)</td>
+                    <td class="data-cell" id="beginning_cash">15000</td>
+                </tr>
+                
+                <tr class="category">
+                    <td colspan="2">Operating Cash Flow</td>
+                </tr>
+                <tr>
+                    <td>Net Income After Taxes (from Income Statement)</td>
+                    <td class="data-cell" id="cf_net_income">3800</td>
+                </tr>
+                <tr>
+                    <td>Investment Income Received</td>
+                    <td class="data-cell" id="cf_investment_income">100</td>
+                </tr>
+                <tr>
+                    <td>Total Income</td>
+                    <td class="data-cell" id="cf_total_income">3900</td>
+                </tr>
+                <tr>
+                    <td>Total Expenses Paid (from Income Statement)</td>
+                    <td class="data-cell" id="cf_expenses">3000</td>
+                </tr>
+                <tr class="total-row">
+                    <td>Net Operating Cash Flow</td>
+                    <td class="data-cell" id="net_operating_cf">900</td>
+                </tr>
+                
+                <tr class="category">
+                    <td colspan="2">Investing Cash Flow</td>
+                </tr>
+                <tr>
+                    <td>Investment Purchases</td>
+                    <td><input type="number" id="investment_purchases" value="200" onchange="updateModel()"></td>
+                </tr>
+                <tr>
+                    <td>Investment Sales</td>
+                    <td><input type="number" id="investment_sales" value="0" onchange="updateModel()"></td>
+                </tr>
+                <tr>
+                    <td>Major Asset Purchases (e.g., home, car)</td>
+                    <td><input type="number" id="asset_purchases" value="0" onchange="updateModel()"></td>
+                </tr>
+                <tr class="total-row">
+                    <td>Net Investing Cash Flow</td>
+                    <td class="data-cell" id="net_investing_cf">-200</td>
+                </tr>
+                
+                <tr class="category">
+                    <td colspan="2">Financing Cash Flow</td>
+                </tr>
+                <tr>
+                    <td>Mortgage Principal Payment</td>
+                    <td><input type="number" id="mortgage_principal" value="300" onchange="updateModel()"></td>
+                </tr>
+                <tr>
+                    <td>Auto Loan Principal Payment</td>
+                    <td><input type="number" id="auto_principal" value="150" onchange="updateModel()"></td>
+                </tr>
+                <tr>
+                    <td>Student Loan Principal Payment</td>
+                    <td><input type="number" id="student_principal" value="200" onchange="updateModel()"></td>
+                </tr>
+                <tr>
+                    <td>Credit Card Principal Payment</td>
+                    <td><input type="number" id="cc_principal" value="100" onchange="updateModel()"></td>
+                </tr>
+                <tr>
+                    <td>New Loans Received</td>
+                    <td><input type="number" id="new_loans" value="0" onchange="updateModel()"></td>
+                </tr>
+                <tr class="total-row">
+                    <td>Net Financing Cash Flow</td>
+                    <td class="data-cell" id="net_financing_cf">-750</td>
+                </tr>
+                
+                <tr class="total-row">
+                    <td>Net Change in Cash</td>
+                    <td class="data-cell" id="net_cash_change">-50</td>
+                </tr>
+                
+                <tr class="total-row">
+                    <td>Ending Cash Balance</td>
+                    <td class="data-cell" id="ending_cash">14950</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabId) {
+            // Hide all tab content
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Deactivate all tabs
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content and activate tab
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`.tab[onclick="showTab('${tabId}')"]`).classList.add('active');
+        }
+        
+        function updateModel() {
+            // Calculate Income Statement
+            const salary = parseFloat(document.getElementById('salary').value) || 0;
+            const bonuses = parseFloat(document.getElementById('bonuses').value) || 0;
+            const investmentIncome = parseFloat(document.getElementById('investment_income').value) || 0;
+            const sideIncome = parseFloat(document.getElementById('side_income').value) || 0;
+            const otherIncome = parseFloat(document.getElementById('other_income').value) || 0;
+            
+            const totalIncome = salary + bonuses + investmentIncome + sideIncome + otherIncome;
+            document.getElementById('total_income').textContent = totalIncome.toFixed(2);
+            
+            const contribution401k = parseFloat(document.getElementById('401k').value) || 0;
+            const healthInsurance = parseFloat(document.getElementById('health_insurance').value) || 0;
+            const hsaFsa = parseFloat(document.getElementById('hsa_fsa').value) || 0;
+            const otherPretax = parseFloat(document.getElementById('other_pretax').value) || 0;
+            
+            const totalPretax = contribution401k + healthInsurance + hsaFsa + otherPretax;
+            document.getElementById('total_pretax').textContent = totalPretax.toFixed(2);
+            
+            const federalTax = parseFloat(document.getElementById('federal_tax').value) || 0;
+            const stateTax = parseFloat(document.getElementById('state_tax').value) || 0;
+            const fica = parseFloat(document.getElementById('fica').value) || 0;
+            
+            const totalTaxes = federalTax + stateTax + fica;
+            document.getElementById('total_taxes').textContent = totalTaxes.toFixed(2);
+            
+            const netIncomeAfterTax = totalIncome - totalPretax - totalTaxes;
+            document.getElementById('net_income_after_tax').textContent = netIncomeAfterTax.toFixed(2);
+            
+            const housing = parseFloat(document.getElementById('housing').value) || 0;
+            const utilities = parseFloat(document.getElementById('utilities').value) || 0;
+            const transportation = parseFloat(document.getElementById('transportation').value) || 0;
+            const food = parseFloat(document.getElementById('food').value) || 0;
+            const healthcare = parseFloat(document.getElementById('healthcare').value) || 0;
+            const debtPayments = parseFloat(document.getElementById('debt_payments').value) || 0;
+            const entertainment = parseFloat(document.getElementById('entertainment').value) || 0;
+            const miscellaneous = parseFloat(document.getElementById('miscellaneous').value) || 0;
+            
+            const totalExpenses = housing + utilities + transportation + food + healthcare + debtPayments + entertainment + miscellaneous;
+            document.getElementById('total_expenses').textContent = totalExpenses.toFixed(2);
+            
+            const netSavings = netIncomeAfterTax - totalExpenses;
+            document.getElementById('net_savings').textContent = netSavings.toFixed(2);
+            
+            const totalSavings = netSavings + contribution401k;
+            document.getElementById('total_savings').textContent = totalSavings.toFixed(2);
+            
+            const savingsRate = (totalSavings / totalIncome) * 100;
+            document.getElementById('savings_rate').textContent = savingsRate.toFixed(2) + '%';
+            
+            // Calculate Balance Sheet
+            const checking = parseFloat(document.getElementById('checking').value) || 0;
+            const savings = parseFloat(document.getElementById('savings').value) || 0;
+            const balance401k = parseFloat(document.getElementById('401k_balance').value) || 0;
+            const iraBalance = parseFloat(document.getElementById('ira_balance').value) || 0;
+            const brokerage = parseFloat(document.getElementById('brokerage').value) || 0;
+            const realEstate = parseFloat(document.getElementById('real_estate').value) || 0;
+            const vehicle = parseFloat(document.getElementById('vehicle').value) || 0;
+            const otherAssets = parseFloat(document.getElementById('other_assets').value) || 0;
+            
+            const totalAssets = checking + savings + balance401k + iraBalance + brokerage + realEstate + vehicle + otherAssets;
+            document.getElementById('total_assets').textContent = totalAssets.toFixed(2);
+            
+            const mortgage = parseFloat(document.getElementById('mortgage').value) || 0;
+            const autoLoan = parseFloat(document.getElementById('auto_loan').value) || 0;
+            const studentLoans = parseFloat(document.getElementById('student_loans').value) || 0;
+            const creditCard = parseFloat(document.getElementById('credit_card').value) || 0;
+            const otherDebt = parseFloat(document.getElementById('other_debt').value) || 0;
+            
+            const totalLiabilities = mortgage + autoLoan + studentLoans + creditCard + otherDebt;
+            document.getElementById('total_liabilities').textContent = totalLiabilities.toFixed(2);
+            
+            const netWorth = totalAssets - totalLiabilities;
+            document.getElementById('net_worth').textContent = netWorth.toFixed(2);
+            
+            const debtAssetRatio = totalLiabilities / totalAssets;
+            document.getElementById('debt_asset_ratio').textContent = debtAssetRatio.toFixed(2);
+            
+            // Calculate Cash Flow Statement
+            const beginningCash = checking + savings;
+            document.getElementById('beginning_cash').textContent = beginningCash.toFixed(2);
+            
+            document.getElementById('cf_net_income').textContent = netIncomeAfterTax.toFixed(2);
+            document.getElementById('cf_investment_income').textContent = investmentIncome.toFixed(2);
+            
+            const cfTotalIncome = netIncomeAfterTax + investmentIncome;
+            document.getElementById('cf_total_income').textContent = cfTotalIncome.toFixed(2);
+            document.getElementById('cf_expenses').textContent = totalExpenses.toFixed(2);
+            
+            const netOperatingCf = cfTotalIncome - totalExpenses;
+            document.getElementById('net_operating_cf').textContent = netOperatingCf.toFixed(2);
+            
+            const investmentPurchases = parseFloat(document.getElementById('investment_purchases').value) || 0;
+            const investmentSales = parseFloat(document.getElementById('investment_sales').value) || 0;
+            const assetPurchases = parseFloat(document.getElementById('asset_purchases').value) || 0;
+            
+            const netInvestingCf = investmentSales - investmentPurchases - assetPurchases;
+            document.getElementById('net_investing_cf').textContent = netInvestingCf.toFixed(2);
+            
+            const mortgagePrincipal = parseFloat(document.getElementById('mortgage_principal').value) || 0;
+            const autoPrincipal = parseFloat(document.getElementById('auto_principal').value) || 0;
+            const studentPrincipal = parseFloat(document.getElementById('student_principal').value) || 0;
+            const ccPrincipal = parseFloat(document.getElementById('cc_principal').value) || 0;
+            const newLoans = parseFloat(document.getElementById('new_loans').value) || 0;
+            
+            const netFinancingCf = newLoans - mortgagePrincipal - autoPrincipal - studentPrincipal - ccPrincipal;
+            document.getElementById('net_financing_cf').textContent = netFinancingCf.toFixed(2);
+            
+            const netCashChange = netOperatingCf + netInvestingCf + netFinancingCf;
+            document.getElementById('net_cash_change').textContent = netCashChange.toFixed(2);
+            
+            const endingCash = beginningCash + netCashChange;
+            document.getElementById('ending_cash').textContent = endingCash.toFixed(2);
+        }
+        
+        // Initial calculation
+        updateModel();
+    </script>
+</body>
+</html>
